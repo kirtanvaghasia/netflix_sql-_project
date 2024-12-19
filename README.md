@@ -56,7 +56,8 @@ GROUP BY 1;
 
 ### 2. Find the Most Common Rating for Movies and TV Shows
 
-```select 
+```sql
+select 
 	type,
 	rating
 from
@@ -77,7 +78,8 @@ where
 
 ### 3. List All Movies Released in a Specific Year (e.g., 2020)
 
-```select * from netflix
+```sql
+select * from netflix
 select 
 	title, type, release_year 
 from netflix 
@@ -122,7 +124,8 @@ ORDER BY SPLIT_PART(duration, ' ', 1)::INT DESC;
 
 ### 6. Find Content Added in the Last 5 Years
 
-```SELECT *
+```sql
+SELECT *
 FROM netflix
 WHERE CASE
           WHEN date_added ~ '^\d{1,2}-[A-Za-z]{3}-\d{2}$' THEN 
