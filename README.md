@@ -1,6 +1,7 @@
 
 # Netflix Movies and TV Shows Data Analysis using SQL
 
+![](https://github.com/najirh/netflix_sql_project/blob/main/logo.png)
 
 ## Overview
 This project involves a comprehensive analysis of Netflix's movies and TV shows data using SQL. The goal is to extract valuable insights and answer various business questions based on the dataset. The following README provides a detailed account of the project's objectives, business problems, solutions, findings, and conclusions.
@@ -55,38 +56,35 @@ GROUP BY 1;
 
 ### 2. Find the Most Common Rating for Movies and TV Shows
 
-```sql
-WITH RatingCounts AS (
-    SELECT 
+```select 
+	type,
+	rating
+from
+(
+	SELECT 
         type,
         rating,
-        COUNT(*) AS rating_count
-    FROM netflix
-    GROUP BY type, rating
-),
-RankedRatings AS (
-    SELECT 
-        type,
-        rating,
-        rating_count,
-        RANK() OVER (PARTITION BY type ORDER BY rating_count DESC) AS rank
-    FROM RatingCounts
+        COUNT(*),
+        RANK() OVER (PARTITION BY type ORDER BY COUNT(*) DESC) AS rank
+    from netflix
+	group by 1,2
 )
-SELECT 
-    type,
-    rating AS most_frequent_rating
-FROM RankedRatings
-WHERE rank = 1;
+where
+	rank = 1
 ```
 
 **Objective:** Identify the most frequently occurring rating for each type of content.
 
 ### 3. List All Movies Released in a Specific Year (e.g., 2020)
 
-```sql
-SELECT * 
-FROM netflix
-WHERE release_year = 2020;
+```select * from netflix
+select 
+	title, type, release_year 
+from netflix 
+where 
+	release_year = 2020 
+	and 
+	type = 'Movie'
 ```
 
 **Objective:** Retrieve all movies released in a specific year.
@@ -124,10 +122,13 @@ ORDER BY SPLIT_PART(duration, ' ', 1)::INT DESC;
 
 ### 6. Find Content Added in the Last 5 Years
 
-```sql
-SELECT *
+```SELECT *
 FROM netflix
-WHERE TO_DATE(date_added, 'Month DD, YYYY') >= CURRENT_DATE - INTERVAL '5 years';
+WHERE CASE
+          WHEN date_added ~ '^\d{1,2}-[A-Za-z]{3}-\d{2}$' THEN 
+              TO_DATE(date_added, 'DD-Mon-YY') >= CURRENT_DATE - INTERVAL '5 years'
+          ELSE FALSE
+      END;
 ```
 
 **Objective:** Retrieve content added to Netflix in the last 5 years.
@@ -196,7 +197,7 @@ LIMIT 5;
 ```sql
 SELECT * 
 FROM netflix
-WHERE listed_in LIKE '%Documentaries';
+WHERE listed_in LIKE '%Documentaries%';
 ```
 
 **Objective:** Retrieve all movies classified as documentaries.
@@ -266,18 +267,3 @@ GROUP BY category;
 This analysis provides a comprehensive view of Netflix's content and can help inform content strategy and decision-making.
 
 
-
-## Author - Zero Analyst
-
-This project is part of my portfolio, showcasing the SQL skills essential for data analyst roles. If you have any questions, feedback, or would like to collaborate, feel free to get in touch!
-
-### Stay Updated and Join the Community
-
-For more content on SQL, data analysis, and other data-related topics, make sure to follow me on social media and join our community:
-
-- **YouTube**: [Subscribe to my channel for tutorials and insights](https://www.youtube.com/@zero_analyst)
-- **Instagram**: [Follow me for daily tips and updates](https://www.instagram.com/zero_analyst/)
-- **LinkedIn**: [Connect with me professionally](https://www.linkedin.com/in/najirr)
-- **Discord**: [Join our community to learn and grow together](https://discord.gg/36h5f2Z5PK)
-
-Thank you for your support, and I look forward to connecting with you!
